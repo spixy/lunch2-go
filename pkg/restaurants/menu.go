@@ -8,6 +8,10 @@ type Menu struct {
 	day   string
 }
 
+func MakeMenuDefault() Menu {
+	return Menu{make([]Meal, 0), true, ""}
+}
+
 func MakeMenu(meals []Meal, day string) Menu {
 	return Menu{meals, true, day}
 }

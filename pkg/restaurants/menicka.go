@@ -16,6 +16,7 @@ type MenickaRestaurant struct {
 
 func MakeMenickaRestaurant(url string, name string) MenickaRestaurant {
 	restaurant := MenickaRestaurant{}
+	restaurant.SetDefaultValues()
 	restaurant.url = url
 	restaurant.name = name
 	return restaurant
@@ -23,6 +24,7 @@ func MakeMenickaRestaurant(url string, name string) MenickaRestaurant {
 
 func NewMenickaRestaurant(url string, name string) *MenickaRestaurant {
 	restaurant := new(MenickaRestaurant)
+	restaurant.SetDefaultValues()
 	restaurant.url = url
 	restaurant.name = name
 	return restaurant

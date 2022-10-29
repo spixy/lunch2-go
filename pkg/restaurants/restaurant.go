@@ -28,6 +28,13 @@ type RestaurantJSON struct {
 	PermanentMeals []Meal `json:"permanentmeals"`
 }
 
+func (restaurant *Restaurant) SetDefaultValues() {
+	restaurant.url = ""
+	restaurant.name = ""
+	restaurant.menus = [7]Menu{}
+	restaurant.permanent = []Meal{}
+}
+
 func (restaurant *Restaurant) AddPermanent(isSoup bool, name string, desc string, price int) {
 	restaurant.AddPermanentMeal(MakeMeal(isSoup, name, desc, price))
 }
@@ -42,7 +49,7 @@ func (restaurant Restaurant) GetMenus() [7]Menu {
 
 func (restaurant *Restaurant) clearMenus() {
 	for i := 0; i < 7; i++ {
-		restaurant.menus[i] = Menu{}
+		restaurant.menus[i] = MakeMenuDefault()
 	}
 }
 
