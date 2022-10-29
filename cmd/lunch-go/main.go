@@ -53,7 +53,6 @@ func refresh(c *gin.Context) {
 }
 
 func main() {
-	fmt.Println("Hello, World!")
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/2752-u-drevaka-beergrill.html", "U Dřeváka"))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/4116-padagali.html", "Padagali"))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/5448-light-of-india.html", "Light of India"))
@@ -71,7 +70,7 @@ func main() {
 	router.GET("/get_all", getAll)
 	router.GET("/get", get)
 	router.GET("/refresh", refresh)
-	router.Run("localhost:8080")
+	router.Run("0.0.0.0:8080")
 	/*
 	   test := restaurants.MakeMenickaRestaurant("https://www.menicka.cz/2752-u-drevaka-beergrill.html", "U Dřeváka")
 	   test.Parse()
