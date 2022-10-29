@@ -7,8 +7,8 @@ RUN cd /app/cmd/lunch-go && go build -o /lunch-go
 
 FROM alpine
 
-COPY --from=build /lunch-go /lunch-go
 RUN apk update && apk add poppler-utils
+COPY --from=build /lunch-go /lunch-go
 
 EXPOSE 8080
 

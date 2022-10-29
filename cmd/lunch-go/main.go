@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	r "git.zvon.tech/zv0n/lunch-go/pkg/restaurants"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -67,23 +68,9 @@ func main() {
 
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
+	router.Use(cors.Default())
 	router.GET("/get_all", getAll)
 	router.GET("/get", get)
 	router.GET("/refresh", refresh)
 	router.Run("0.0.0.0:8080")
-	/*
-	   test := restaurants.MakeMenickaRestaurant("https://www.menicka.cz/2752-u-drevaka-beergrill.html", "U Dřeváka")
-	   test.Parse()
-
-	   	for _, menu := range test.GetMenus() {
-	   		for _, meal := range menu.GetMeals() {
-	   			if meal.IsSoup() {
-	   				fmt.Print("Soup: ")
-	   			} else {
-	   				fmt.Print("Meal: ")
-	   			}
-	   			fmt.Println(meal.GetName(), "; ", meal.GetPrice(), "Kč")
-	   		}
-	   	}
-	*/
 }
