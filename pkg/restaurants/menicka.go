@@ -66,7 +66,7 @@ func (restaurant *MenickaRestaurant) Parse() {
 		return
 	}
 	for menu := content.FirstChild; menu != nil; menu = menu.NextSibling {
-		if hasClass(menu, "menicka") {
+		if hasKeyValue(menu, "class", "menicka") {
 			day, err := findNodeByClass(menu, "nadpis")
 			if err != nil {
 				continue
@@ -107,7 +107,7 @@ func (restaurant *MenickaRestaurant) Parse() {
 						price = -1
 					}
 				}
-				if hasClass(meal, "polevka") {
+				if hasKeyValue(meal, "class", "polevka") {
 					restaurant.menus[dayIndex].Add(true, strings.TrimSpace(name), "", price)
 				} else {
 					restaurant.menus[dayIndex].Add(false, strings.TrimSpace(name), "", price)
@@ -115,4 +115,11 @@ func (restaurant *MenickaRestaurant) Parse() {
 			}
 		}
 	}
+	restaurant.menus[0].SetDay("Monday")
+	restaurant.menus[1].SetDay("Tuesday")
+	restaurant.menus[2].SetDay("Wednesday")
+	restaurant.menus[3].SetDay("Thursday")
+	restaurant.menus[4].SetDay("Friday")
+	restaurant.menus[5].SetDay("Saturday")
+	restaurant.menus[6].SetDay("Sunday")
 }

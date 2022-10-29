@@ -11,7 +11,7 @@ import (
 var restaurants []r.RestaurantInterface
 
 func getAll(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, restaurants)
+	c.JSON(http.StatusOK, restaurants)
 }
 
 func dayToIndex(day string) int {
@@ -38,7 +38,7 @@ func get(c *gin.Context) {
 		obj := restaurant.GetSpecificDayObject([]int{day})
 		responseObjects = append(responseObjects, obj)
 	}
-	c.IndentedJSON(http.StatusOK, responseObjects)
+	c.JSON(http.StatusOK, responseObjects)
 }
 
 func refreshInternal() {
@@ -60,8 +60,11 @@ func main() {
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/2609-pizzeria-al-capone.html", "Al Capone"))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/3830-suzies-steak-pub.html", "Suzie's"))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/6468-diva-bara.html", "Divá Bára"))
+	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/6695-u-karla.html", "U Karla"))
+	restaurants = append(restaurants, r.NewFreshRestaurant("http://www.fresh-menu.cz/", "Fresh"))
 
 	refreshInternal()
+	fmt.Println("Initial parsing finished")
 
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()

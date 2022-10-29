@@ -17,28 +17,36 @@ func getAttribute(node *html.Node, key string) (string, error) {
 	return "", errors.New("couldn't find the provided key")
 }
 
-func hasClass(node *html.Node, class string) bool {
+func hasKeyValue(node *html.Node, key string, value string) bool {
 	if node.Type == html.ElementNode {
-		c, err := getAttribute(node, "class")
+		attr, err := getAttribute(node, key)
 		if err != nil {
 			return false
 		}
-		return c == class
+		return attr == value
 	}
 	return false
 }
 
-func findNodeByClass(node *html.Node, class string) (*html.Node, error) {
-	if hasClass(node, class) {
+func findNodeBy(node *html.Node, key string, value string) (*html.Node, error) {
+	if hasKeyValue(node, key, value) {
 		return node, nil
 	}
 	for n := node.FirstChild; n != nil; n = n.NextSibling {
-		c, err := findNodeByClass(n, class)
+		res, err := findNodeBy(n, key, value)
 		if err == nil {
-			return c, nil
+			return res, nil
 		}
 	}
-	return nil, errors.New("couldn't find a node with provided class")
+	return nil, errors.New("couldn't find a node with provided " + key + " \"" + value + "\"")
+}
+
+func findNodeByClass(node *html.Node, class string) (*html.Node, error) {
+	return findNodeBy(node, "class", class)
+}
+
+func findNodeById(node *html.Node, id string) (*html.Node, error) {
+	return findNodeBy(node, "id", id)
 }
 
 func getTextInternal(node *html.Node) (string, error) {
