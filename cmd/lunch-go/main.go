@@ -54,6 +54,7 @@ func refresh(c *gin.Context) {
 }
 
 func main() {
+	restaurants = append(restaurants, r.NewFreshRestaurant("http://www.fresh-menu.cz/", "Fresh"))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/2752-u-drevaka-beergrill.html", "U Dřeváka"))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/4116-padagali.html", "Padagali"))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/5448-light-of-india.html", "Light of India"))
@@ -61,7 +62,6 @@ func main() {
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/3830-suzies-steak-pub.html", "Suzie's"))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/6468-diva-bara.html", "Divá Bára"))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/6695-u-karla.html", "U Karla"))
-	restaurants = append(restaurants, r.NewFreshRestaurant("http://www.fresh-menu.cz/", "Fresh"))
 
 	refreshInternal()
 	fmt.Println("Initial parsing finished")
