@@ -108,7 +108,7 @@ func (restaurant *FreshRestaurant) Parse() {
 			continue
 		}
 		for ind, meal := range meals[i] {
-			if ind >= len(prices) {
+			if ind >= len(prices[i]) {
 				break
 			}
 			restaurant.menus[i].Add(ind == 0, meal, "", prices[i][ind])
