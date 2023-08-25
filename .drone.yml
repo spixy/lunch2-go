@@ -9,6 +9,11 @@ platform:
 steps:
 - name: build
   image: docker
+  environment:
+    DOCKER_USERNAME:
+      from_secret: DOCKER_USERNAME
+    DOCKER_PASSWORD:
+      from_secret: DOCKER_PASSWORD
   commands:
   - echo "$DOCKER_USERNAME"
-  - echo "$DOCKER_PASSWORD" | docker login "docker.zvon.tech" --username "$DOCKER_USERNAME" --password-stdin
+  - docker login "docker.zvon.tech" --username "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD"
