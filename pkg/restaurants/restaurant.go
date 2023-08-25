@@ -16,6 +16,7 @@ type RestaurantInterface interface {
 
 type Restaurant struct {
 	RestaurantInterface
+	id        int
 	url       string
 	name      string
 	menus     [7]Menu
@@ -23,6 +24,7 @@ type Restaurant struct {
 }
 
 type RestaurantJSON struct {
+	Id             int    `json:"id"`
 	Restaurant     string `json:"restaurant"`
 	DailyMenus     []Menu `json:"dailymenus"`
 	PermanentMeals []Meal `json:"permanentmeals"`
@@ -55,6 +57,7 @@ func (restaurant *Restaurant) clearMenus() {
 
 func (restaurant *Restaurant) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&RestaurantJSON{
+		Id:             restaurant.id,
 		Restaurant:     restaurant.name,
 		DailyMenus:     restaurant.menus[:],
 		PermanentMeals: restaurant.permanent,

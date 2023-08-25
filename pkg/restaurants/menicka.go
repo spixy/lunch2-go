@@ -14,17 +14,10 @@ type MenickaRestaurant struct {
 	Restaurant
 }
 
-func MakeMenickaRestaurant(url string, name string) MenickaRestaurant {
-	restaurant := MenickaRestaurant{}
-	restaurant.SetDefaultValues()
-	restaurant.url = url
-	restaurant.name = name
-	return restaurant
-}
-
-func NewMenickaRestaurant(url string, name string) *MenickaRestaurant {
+func NewMenickaRestaurant(url string, name string, id int) *MenickaRestaurant {
 	restaurant := new(MenickaRestaurant)
 	restaurant.SetDefaultValues()
+	restaurant.id = id
 	restaurant.url = url
 	restaurant.name = name
 	return restaurant

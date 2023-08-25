@@ -15,17 +15,10 @@ type FreshRestaurant struct {
 	Restaurant
 }
 
-func MakeFreshRestaurant(url string, name string) FreshRestaurant {
-	restaurant := FreshRestaurant{}
-	restaurant.SetDefaultValues()
-	restaurant.url = url
-	restaurant.name = name
-	return restaurant
-}
-
-func NewFreshRestaurant(url string, name string) *FreshRestaurant {
+func NewFreshRestaurant(url string, name string, id int) *FreshRestaurant {
 	restaurant := new(FreshRestaurant)
 	restaurant.SetDefaultValues()
+	restaurant.id = id
 	restaurant.url = url
 	restaurant.name = name
 	return restaurant
