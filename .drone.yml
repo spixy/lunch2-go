@@ -42,4 +42,4 @@ steps:
 - name: build
   image: docker
   commands:
-  - echo "$DOCKER_PASSWORD" | docker login "docker.zvon.tech" -u "$DOCKER_USERNAME" --password-stdin
+  - echo "$DOCKER_PASSWORD" | docker login "docker.zvon.tech" --username "$DOCKER_USERNAME" --password-stdin
