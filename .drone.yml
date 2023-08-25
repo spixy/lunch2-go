@@ -31,6 +31,10 @@ services:
 volumes:
 - name: dockersock
   temp: {}
+
+trigger:
+  event:
+  - push
 ---
 kind: pipeline
 type: kubernetes
@@ -51,7 +55,7 @@ steps:
   - name: dockersock
     path: /var/run
   commands:
-  - echo "$DOCKER_USERNAME"
+  - while [ ! -S "/var/run/docker.sock" ] ; do sleep 1s ; done
   - docker login "docker.zvon.tech" --username "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD"
   - docker buildx create --use
   - docker buildx build -f Dockerfile -t "docker.zvon.tech/lunch-go:${DRONE_TAG}" --platform linux/amd64,linux/arm64 --push .
