@@ -17,6 +17,7 @@ steps:
   - name: dockersock
     path: /var/run
   commands:
+  - sleep 20s
   - docker build -f Dockerfile .
 
 services:
