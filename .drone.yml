@@ -17,7 +17,7 @@ steps:
   - name: dockersock
     path: /var/run
   commands:
-  - while [ ! -f "/var/run/docker.sock" ] ; do sleep 1s ; done
+  - while [ ! -S "/var/run/docker.sock" ] ; do sleep 1s ; done
   - docker build -f Dockerfile .
 
 services:
