@@ -66,6 +66,7 @@ func (restaurant *Restaurant) MarshalJSON() ([]byte, error) {
 
 func (restaurant *Restaurant) GetSpecificDayObject(days []int) RestaurantJSON {
 	obj := RestaurantJSON{
+		Id:             restaurant.id,
 		Restaurant:     restaurant.name,
 		PermanentMeals: restaurant.permanent,
 	}
