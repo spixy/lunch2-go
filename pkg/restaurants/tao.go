@@ -24,6 +24,7 @@ func NewTaoRestaurant(url string, name string, id int) *TaoRestaurant {
 
 func (restaurant *TaoRestaurant) Parse() {
 	restaurant.clearMenus()
+	restaurant.clearPermanentMenus()
 	resp, err := http.Get(restaurant.url)
 	if err != nil {
 		return

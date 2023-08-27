@@ -55,6 +55,10 @@ func (restaurant *Restaurant) clearMenus() {
 	}
 }
 
+func (restaurant *Restaurant) clearPermanentMenus() {
+	restaurant.permanent = []Meal{}
+}
+
 func (restaurant *Restaurant) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&RestaurantJSON{
 		Id:             restaurant.id,
