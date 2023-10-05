@@ -65,6 +65,7 @@ func main() {
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/7470-the-immigrant-.html", "The Immigrant", 9))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/2721-selepka.html", "Šelepka", 10))
 	restaurants = append(restaurants, r.NewTaoRestaurant("https://www.taorestaurant.cz/tydenni_menu/nabidka/", "Tao", 11))
+	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/3854-na-ruzku.html", "Na Růžku", 12))
 
 	refreshInternal()
 	fmt.Println("Initial parsing finished")
