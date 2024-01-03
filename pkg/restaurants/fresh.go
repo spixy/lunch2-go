@@ -84,6 +84,9 @@ func (restaurant *FreshRestaurant) Parse() {
 			meals[curIndex] = append(meals[curIndex], line[10:])
 			prices[curIndex] = append(prices[curIndex], -1)
 		}
+		if curIndex < 0 {
+			curIndex++
+		}
 		if !pricesSection && line[1] == '.' && len(line) > 2 {
 			meals[curIndex] = append(meals[curIndex], line[3:])
 		}
