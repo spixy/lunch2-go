@@ -54,7 +54,7 @@ func refresh(c *gin.Context) {
 }
 
 func main() {
-	restaurants = append(restaurants, r.NewFreshRestaurant("http://www.fresh-menu.cz/", "Fresh", 1))
+	//restaurants = append(restaurants, r.NewFreshRestaurant("http://www.fresh-menu.cz/", "Fresh", 1))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/2752-u-drevaka-beergrill.html", "U Dřeváka", 2))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/4116-padagali.html", "Padagali", 3))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/5448-light-of-india.html", "Light of India", 4))
