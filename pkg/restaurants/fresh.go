@@ -24,7 +24,31 @@ func NewFreshRestaurant(url string, name string, id int) *FreshRestaurant {
 	return restaurant
 }
 
+func getIndexFromDay(line string) int {
+	if len(line) < 3 || line[:3] == "Pol" {
+		return -1
+	}
+	ascii := line[:2]
+	unicode := line[:3]
+	if ascii == "Po" {
+		return 0
+	} else if unicode == "Út" {
+		return 1
+	} else if ascii == "St" {
+		return 2
+	} else if unicode == "Čt" {
+		return 3
+	} else if unicode == "Pá" {
+		return 4
+	}
+	return -1
+}
+
 func (restaurant *FreshRestaurant) Parse() {
+	defer func() {
+		recover()
+	}()
+
 	restaurant.clearMenus()
 	resp, err := http.Get(restaurant.url)
 	if err != nil {
@@ -62,12 +86,16 @@ func (restaurant *FreshRestaurant) Parse() {
 	meals := [5][]string{}
 	prices := [5][]int{}
 	scanner := bufio.NewScanner(strings.NewReader(pdftxt.Body))
-	curIndex := -1
+	curIndex := 0
 	pricesIndex := -1
 	pricesSection := false
 	emptyLine := false
 	for scanner.Scan() {
 		line := scanner.Text()
+		dayIndex := getIndexFromDay(line)
+		if dayIndex != -1 {
+			curIndex = dayIndex
+		}
 		if len(line) == 0 {
 			emptyLine = true
 			pricesSection = false
@@ -80,12 +108,8 @@ func (restaurant *FreshRestaurant) Parse() {
 		emptyLine = false
 		// 10 because soup name starts after 10 and vacations have no soup provided
 		if !pricesSection && len(line) > 10 && line[:3] == "Pol" {
-			curIndex++
 			meals[curIndex] = append(meals[curIndex], line[10:])
 			prices[curIndex] = append(prices[curIndex], -1)
-		}
-		if curIndex < 0 {
-			curIndex++
 		}
 		if !pricesSection && line[1] == '.' && len(line) > 2 {
 			meals[curIndex] = append(meals[curIndex], line[3:])
