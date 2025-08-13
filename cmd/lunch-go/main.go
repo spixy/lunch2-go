@@ -54,18 +54,15 @@ func refresh(c *gin.Context) {
 }
 
 func main() {
-	restaurants = append(restaurants, r.NewFreshRestaurant("http://www.fresh-menu.cz/", "Fresh", 1))
-	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/2752-u-drevaka-beergrill.html", "U Dřeváka", 2))
-	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/4116-padagali.html", "Padagali", 3))
-	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/5448-light-of-india.html", "Light of India", 4))
-	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/2609-pizzeria-al-capone.html", "Al Capone", 5))
-	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/3830-suzies-steak-pub.html", "Suzie's", 6))
-	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/6468-diva-bara.html", "Divá Bára", 7))
-	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/6695-u-karla.html", "U Karla", 8))
-	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/7470-the-immigrant-.html", "The Immigrant", 9))
-	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/2721-selepka.html", "Šelepka", 10))
-	restaurants = append(restaurants, r.NewTaoRestaurant("https://www.taorestaurant.cz/tydenni_menu/nabidka/", "Tao", 11))
-	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/3854-na-ruzku.html", "Na Růžku", 12))
+	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/2787-tusto-titanium.html", "Tusto", 1))
+	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/5876-restaurace-u-emila.html", "U Emila", 2))
+	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/5369-restaurace-bogota.html", "Bogota", 3))
+	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/2687-kometa-arena-pub.html", "Kometa Arena Pub", 4))
+	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/3870-pizzerie-basilico.html", "Pizzerie Basilico", 5))
+	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/7220-gourmet-u-vankovky.html", "Gourmet u Vaňkovky", 6))
+	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/3160-restaurace-na-tahu-.html", "Na-tahu", 7))
+	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/2743-restaurant-padowetz.html", "Padowetz", 8))
+	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/4116-padagali.html", "Padagali", 9))
 
 	refreshInternal()
 	fmt.Println("Initial parsing finished")
