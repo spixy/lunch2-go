@@ -60,10 +60,10 @@ func main() {
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/3870-pizzerie-basilico.html", "Basilico", 4))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/5876-restaurace-u-emila.html", "U Emila", 5))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/5369-restaurace-bogota.html", "Bogota", 6))
-	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/2687-kometa-arena-pub.html", "Kometa Arena Pub", 7))
-	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/3160-restaurace-na-tahu-.html", "Na-tahu", 8))
+	restaurants = append(restaurants, r.NewHimalayaRestaurant("https://himalayarestaurace.cz/denni-menu", "Himalaya", 7))
+	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/2687-kometa-arena-pub.html", "Kometa Arena Pub", 8))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/3165-potrefena-husa-zelny-trh.html", "Potrefená Husa", 9))
-	restaurants = append(restaurants, r.NewStaticRestaurant("https://himalayarestaurace.cz/denni-menu", "Himalaya", 10))
+	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/3160-restaurace-na-tahu-.html", "Na-tahu", 10))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/4116-padagali.html", "Padagali", 11))
 
 	refreshInternal()
