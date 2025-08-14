@@ -45,7 +45,7 @@ func (restaurant *HimalayaRestaurant) Parse() {
 		if err != nil || nameText == "" {
 			continue
 		}
-		restaurant.AddPermanent(false, nameText, "", 0)
+		restaurant.AddPermanent(false, nameText, "", -1)
 	}
 
 	restaurant.menus[0].SetDay("Monday")
