@@ -25,6 +25,7 @@ type Restaurant struct {
 
 type RestaurantJSON struct {
 	Id             int    `json:"id"`
+	Url            string `json:"url"`
 	Restaurant     string `json:"restaurant"`
 	DailyMenus     []Menu `json:"dailymenus"`
 	PermanentMeals []Meal `json:"permanentmeals"`
@@ -63,6 +64,7 @@ func (restaurant *Restaurant) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&RestaurantJSON{
 		Id:             restaurant.id,
 		Restaurant:     restaurant.name,
+		Url:            restaurant.url,
 		DailyMenus:     restaurant.menus[:],
 		PermanentMeals: restaurant.permanent,
 	})
@@ -72,6 +74,7 @@ func (restaurant *Restaurant) GetSpecificDayObject(days []int) RestaurantJSON {
 	obj := RestaurantJSON{
 		Id:             restaurant.id,
 		Restaurant:     restaurant.name,
+		Url:            restaurant.url,
 		PermanentMeals: restaurant.permanent,
 	}
 	for _, index := range days {
