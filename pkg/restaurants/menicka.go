@@ -10,8 +10,12 @@ import (
 	"golang.org/x/net/html"
 )
 
+type MealProcessor = func(mealName string) string
+
 type MenickaRestaurant struct {
 	Restaurant
+	soups         int
+	mealProcessor MealProcessor
 }
 
 func NewMenickaRestaurant(url string, name string, id int) *MenickaRestaurant {
@@ -20,6 +24,20 @@ func NewMenickaRestaurant(url string, name string, id int) *MenickaRestaurant {
 	restaurant.id = id
 	restaurant.url = url
 	restaurant.name = name
+	restaurant.soups = 0
+	restaurant.mealProcessor = func(mealName string) string { return mealName }
+	return restaurant
+}
+
+func NewPadowetzRestaurant(url string, name string, id int) *MenickaRestaurant {
+	restaurant := NewMenickaRestaurant(url, name, id)
+	restaurant.soups = 2
+	return restaurant
+}
+
+func NewBogotaRestaurant(url string, name string, id int) *MenickaRestaurant {
+	restaurant := NewMenickaRestaurant(url, name, id)
+	restaurant.mealProcessor = func(mealName string) string { return strings.ReplaceAll(mealName, "()", "") }
 	return restaurant
 }
 
@@ -81,6 +99,7 @@ func (restaurant *MenickaRestaurant) Parse() {
 				continue
 			}
 
+			var mealIndex = 0
 			for meal := meals.FirstChild; meal != nil; meal = meal.NextSibling {
 				nameNode, err := findNodeByClass(meal, "polozka")
 				if err != nil {
@@ -102,11 +121,10 @@ func (restaurant *MenickaRestaurant) Parse() {
 						price = -1
 					}
 				}
-				if hasKeyValue(meal, "class", "polevka") {
-					restaurant.menus[dayIndex].Add(true, strings.TrimSpace(name), "", price)
-				} else {
-					restaurant.menus[dayIndex].Add(false, strings.TrimSpace(name), "", price)
-				}
+
+				var isSoup = hasKeyValue(meal, "class", "polevka") || mealIndex < restaurant.soups
+				restaurant.menus[dayIndex].Add(isSoup, strings.TrimSpace(restaurant.mealProcessor(name)), "", price)
+				mealIndex++
 			}
 		}
 	}
