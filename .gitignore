@@ -21,4 +21,7 @@
 # Go workspace file
 go.work
 
+#IDEs
+.idea
+
 lunch-go
