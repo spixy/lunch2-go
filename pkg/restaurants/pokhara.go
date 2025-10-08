@@ -3,6 +3,7 @@ package restaurants
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"golang.org/x/net/html"
@@ -58,7 +59,21 @@ func (restaurant *PokharaRestaurant) Parse() {
 		} else if nextDay == 0 {
 			continue
 		}
-		restaurant.menus[nextDay-1].Add(isSoup, nameText, "", -1)
+
+		var textParts = strings.Split(nameText, " ")
+
+		text := nameText
+		if len(textParts) > 1 {
+			text = strings.Join(textParts[:len(textParts)-1], " ")
+		}
+
+		var priceStr = strings.ReplaceAll(strings.ReplaceAll(textParts[len(textParts)-1], "kc", ""), "KC", "")
+		price, err := strconv.Atoi(strings.Split(priceStr, " ")[0])
+		if err != nil {
+			price = -1
+		}
+
+		restaurant.menus[nextDay-1].Add(isSoup, text, "", price)
 		isSoup = false
 	}
 
