@@ -49,7 +49,11 @@ func (restaurant *PokharaRestaurant) Parse() {
 	isSoup := false
 	for menu := daily.FirstChild; menu != nil; menu = menu.NextSibling {
 		nameText, err := getText(menu)
-		if err != nil || strings.TrimSpace(nameText) == "" || nameText == "\n" {
+		if err != nil {
+			continue
+		}
+		nameText = strings.TrimSpace(nameText)
+		if nameText == "" {
 			continue
 		}
 		if nameText == pokharaDays[nextDay] {
