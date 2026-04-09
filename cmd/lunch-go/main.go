@@ -59,7 +59,7 @@ func main() {
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/7220-gourmet-u-vankovky.html", "Gourmet", 3))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/3870-pizzerie-basilico.html", "Basilico", 4))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/5876-restaurace-u-emila.html", "U Emila", 5))
-	restaurants = append(restaurants, r.NewBogotaRestaurant("https://www.menicka.cz/5369-restaurace-bogota.html", "Bogota", 6))
+	// Bogota RIP
 	restaurants = append(restaurants, r.NewHimalayaRestaurant("https://himalayarestaurace.cz/denni-menu", "Himalaya", 7))
 	restaurants = append(restaurants, r.NewPokharaRestaurant("https://www.pokhara.cz/tydenni-menu", "Pokhara", 8))
 	restaurants = append(restaurants, r.NewMenickaRestaurant("https://www.menicka.cz/3178-charlie-square.html", "Charlie Square", 9))
