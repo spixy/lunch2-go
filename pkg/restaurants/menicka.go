@@ -89,11 +89,11 @@ func (restaurant *MenickaRestaurant) Parse() {
 				continue
 			}
 
-			dayText, err := getTextDecodeWindows1250(day)
+			dayText, err := getText(day)
 			if err != nil {
 				continue
 			}
-			dayText = strings.Split(dayText, " ")[0]
+			dayText = strings.TrimSpace(strings.Split(dayText, " ")[0])
 			dayIndex, err := dayToIndex(dayText)
 			if err != nil {
 				continue
@@ -105,10 +105,11 @@ func (restaurant *MenickaRestaurant) Parse() {
 				if err != nil {
 					continue
 				}
-				name, err := getTextDecodeWindows1250(nameNode)
+				name, err := getText(nameNode)
 				if err != nil {
 					continue
 				}
+				name = normalizeWhitespace(name)
 				price := -1
 				priceNode, err := findNodeByClass(meal, "cena")
 				if err == nil {
