@@ -2,9 +2,9 @@ package restaurants
 
 import (
 	"errors"
+	"strings"
 
 	"golang.org/x/net/html"
-	"golang.org/x/text/encoding/charmap"
 )
 
 func getAttribute(node *html.Node, key string) (string, error) {
@@ -69,16 +69,6 @@ func getText(node *html.Node) (string, error) {
 	return "", errors.New("couldn't find a text node")
 }
 
-func getTextDecodeWindows1250(node *html.Node) (string, error) {
-	text, err := getText(node)
-	if err != nil {
-		return text, err
-	}
-	return decodeWindows1250(text)
-}
-
-func decodeWindows1250(text string) (string, error) {
-	dec := charmap.Windows1250.NewDecoder()
-	out, err := dec.String(text)
-	return out, err
+func normalizeWhitespace(s string) string {
+	return strings.Join(strings.Fields(s), " ")
 }
