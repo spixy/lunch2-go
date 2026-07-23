@@ -23,6 +23,14 @@ func hasKeyValue(node *html.Node, key string, value string) bool {
 		if err != nil {
 			return false
 		}
+		if key == "class" {
+			for _, class := range strings.Fields(attr) {
+				if class == value {
+					return true
+				}
+			}
+			return false
+		}
 		return attr == value
 	}
 	return false
@@ -49,24 +57,24 @@ func findNodeById(node *html.Node, id string) (*html.Node, error) {
 	return findNodeBy(node, "id", id)
 }
 
-func getTextInternal(node *html.Node) (string, error) {
-	if node.Type == html.TextNode {
-		return node.Data, nil
-	}
-	return "", errors.New("not a text node")
-}
-
 func getText(node *html.Node) (string, error) {
 	if node.Type == html.TextNode {
 		return node.Data, nil
 	}
+	var builder strings.Builder
 	for n := node.FirstChild; n != nil; n = n.NextSibling {
-		text, err := getTextInternal(n)
-		if err == nil {
-			return text, nil
+		text, err := getText(n)
+		if err != nil {
+			continue
 		}
+		builder.WriteString(text)
+		builder.WriteString(" ")
 	}
-	return "", errors.New("couldn't find a text node")
+	text := builder.String()
+	if text == "" {
+		return "", errors.New("couldn't find a text node")
+	}
+	return text, nil
 }
 
 func normalizeWhitespace(s string) string {

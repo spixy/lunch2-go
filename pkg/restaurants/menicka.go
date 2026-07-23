@@ -35,29 +35,46 @@ func NewPadowetzRestaurant(url string, name string, id int) *MenickaRestaurant {
 	return restaurant
 }
 
-func NewBogotaRestaurant(url string, name string, id int) *MenickaRestaurant {
-	restaurant := NewMenickaRestaurant(url, name, id)
-	restaurant.mealProcessor = func(mealName string) string { return strings.ReplaceAll(mealName, "()", "") }
-	return restaurant
-}
-
 func dayToIndex(day string) (int, error) {
-	if day == "Pondělí" {
+	switch day {
+	case "Pond\u011bl\u00ed", "Pondeli":
 		return 0, nil
-	} else if day == "Úterý" {
+	case "\u00dater\u00fd", "Utery":
 		return 1, nil
-	} else if day == "Středa" {
+	case "St\u0159eda", "Streda":
 		return 2, nil
-	} else if day == "Čtvrtek" {
+	case "\u010ctvrtek", "Ctvrtek":
 		return 3, nil
-	} else if day == "Pátek" {
+	case "P\u00e1tek", "Patek":
 		return 4, nil
-	} else if day == "Sobota" {
+	case "Sobota":
 		return 5, nil
-	} else if day == "Neděle" {
+	case "Ned\u011ble", "Nedele":
 		return 6, nil
 	}
 	return -1, errors.New("couldn't parse the day")
+}
+
+func getMenickaMealName(node *html.Node) string {
+	if node.Type == html.ElementNode {
+		if node.Data == "em" || hasKeyValue(node, "class", "poradi") {
+			return ""
+		}
+	}
+	if node.Type == html.TextNode {
+		return node.Data
+	}
+
+	var builder strings.Builder
+	for n := node.FirstChild; n != nil; n = n.NextSibling {
+		text := getMenickaMealName(n)
+		if text == "" {
+			continue
+		}
+		builder.WriteString(text)
+		builder.WriteString(" ")
+	}
+	return builder.String()
 }
 
 func (restaurant *MenickaRestaurant) Parse() {
@@ -105,11 +122,7 @@ func (restaurant *MenickaRestaurant) Parse() {
 				if err != nil {
 					continue
 				}
-				name, err := getText(nameNode)
-				if err != nil {
-					continue
-				}
-				name = normalizeWhitespace(name)
+				name := normalizeWhitespace(getMenickaMealName(nameNode))
 				price := -1
 				priceNode, err := findNodeByClass(meal, "cena")
 				if err == nil {
@@ -117,7 +130,7 @@ func (restaurant *MenickaRestaurant) Parse() {
 					if err != nil {
 						continue
 					}
-					price, err = strconv.Atoi(strings.Split(priceStr, " ")[0])
+					price, err = strconv.Atoi(strings.Split(normalizeWhitespace(priceStr), " ")[0])
 					if err != nil {
 						price = -1
 					}
