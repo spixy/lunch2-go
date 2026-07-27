@@ -1,10 +1,10 @@
 module git.zvon.tech/zv0n/lunch-go
 
-go 1.19
+go 1.24.0
 
 require (
 	github.com/gin-gonic/gin v1.9.1
-	golang.org/x/text v0.14.0
+	golang.org/x/text v0.31.0
 )
 
 require (
@@ -35,8 +35,8 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
-	golang.org/x/crypto v0.21.0 // indirect
-	golang.org/x/net v0.22.0
-	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/crypto v0.45.0 // indirect
+	golang.org/x/net v0.47.0
+	golang.org/x/sys v0.38.0 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 )
