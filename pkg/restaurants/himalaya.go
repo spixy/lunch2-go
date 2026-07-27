@@ -40,12 +40,21 @@ func (restaurant *HimalayaRestaurant) Parse() {
 		fmt.Printf("Couldn't find content for restaurant \"%s\"\n", restaurant.name)
 		return
 	}
+
+	i := 0
 	for menu := daily.FirstChild; menu != nil; menu = menu.NextSibling {
 		nameText, err := getAttribute(menu, "value")
 		if err != nil || nameText == "" {
 			continue
 		}
-		restaurant.AddPermanent(false, nameText, "", -1)
+		price := 139
+		if i == 22 {
+			price = 140
+		} else if i > 18 {
+			price = 180
+		}
+		restaurant.AddPermanent(false, nameText, "", price)
+		i++
 	}
 
 	restaurant.menus[0].SetDay("Monday")
