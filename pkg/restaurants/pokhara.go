@@ -4,30 +4,65 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"golang.org/x/net/html"
 )
 
 type PokharaRestaurant struct {
 	Restaurant
+	dataUrl string
 }
 
-var pokharaDays = [6]string{"PONDELI", "UTERY", "STREDA", "CTVRTEK", "PÁTEK", "SOBOTA"}
+var pokharaDays = map[string]int{"mon": 0, "tue": 1, "wed": 2, "thu": 3, "fri": 4, "sat": 5, "sun": 6}
 
-func NewPokharaRestaurant(url string, name string, id int) *PokharaRestaurant {
+// NewPokharaRestaurant creates the restaurant with url as the public weekly
+// menu page and dataUrl as the document the page loads its menu from via JS.
+func NewPokharaRestaurant(url string, dataUrl string, name string, id int) *PokharaRestaurant {
 	restaurant := new(PokharaRestaurant)
 	restaurant.SetDefaultValues()
 	restaurant.id = id
 	restaurant.url = url
+	restaurant.dataUrl = dataUrl
 	restaurant.name = name
 	return restaurant
+}
+
+// pokharaChildText returns the normalized text of the first descendant with
+// the given class, or "" when there is none.
+func pokharaChildText(node *html.Node, class string) string {
+	child, err := findNodeByClass(node, class)
+	if err != nil {
+		return ""
+	}
+	text, err := getText(child)
+	if err != nil {
+		return ""
+	}
+	return normalizeWhitespace(text)
+}
+
+func (restaurant *PokharaRestaurant) parseMeals(node *html.Node, menu *Menu, isSoup bool) {
+	if hasKeyValue(node, "class", "meal-card") {
+		name := pokharaChildText(node, "meal-name")
+		if name == "" {
+			return
+		}
+		price, err := strconv.Atoi(pokharaChildText(node, "price-value"))
+		if err != nil {
+			price = -1
+		}
+		menu.Add(isSoup, name, pokharaChildText(node, "meal-description"), price)
+		return
+	}
+	for n := node.FirstChild; n != nil; n = n.NextSibling {
+		restaurant.parseMeals(n, menu, isSoup)
+	}
 }
 
 func (restaurant *PokharaRestaurant) Parse() {
 	restaurant.clearMenus()
 	restaurant.clearPermanentMenus()
-	resp, err := http.Get(restaurant.url)
+	resp, err := http.Get(restaurant.dataUrl)
 	if err != nil {
 		return
 	}
@@ -38,47 +73,42 @@ func (restaurant *PokharaRestaurant) Parse() {
 		return
 	}
 
-	// first occurence of #menu
-	daily, err := findNodeByClass(doc, "col-lg-12")
+	// <div class="weekly-panels-container"> holds one
+	// <div mc-data="mon" class="weekly-day-panel"> per day, each split into
+	// <div class="meal-group"> sections (soups, main courses) of meal cards.
+	panels, err := findNodeByClass(doc, "weekly-panels-container")
 	if err != nil {
 		fmt.Printf("Couldn't find content for restaurant \"%s\"\n", restaurant.name)
 		return
 	}
 
-	nextDay := 0
-	isSoup := false
-	for menu := daily.FirstChild; menu != nil; menu = menu.NextSibling {
-		nameText, err := getText(menu)
+	for panel := panels.FirstChild; panel != nil; panel = panel.NextSibling {
+		if !hasKeyValue(panel, "class", "weekly-day-panel") {
+			continue
+		}
+		day, err := getAttribute(panel, "mc-data")
 		if err != nil {
 			continue
 		}
-		nameText = strings.TrimSpace(nameText)
-		if nameText == "" {
-			continue
-		}
-		if nameText == pokharaDays[nextDay] {
-			nextDay++
-			isSoup = true
-			continue
-		} else if nextDay == 0 {
+		dayIndex, ok := pokharaDays[day]
+		if !ok {
 			continue
 		}
 
-		var textParts = strings.Split(nameText, " ")
-
-		text := nameText
-		if len(textParts) > 1 {
-			text = strings.Join(textParts[:len(textParts)-1], " ")
-		}
-
-		var priceStr = strings.ReplaceAll(strings.ReplaceAll(textParts[len(textParts)-1], "kc", ""), "KC", "")
-		price, err := strconv.Atoi(strings.Split(priceStr, " ")[0])
+		groups, err := findNodeByClass(panel, "meal-groups-grid")
 		if err != nil {
-			price = -1
+			continue
 		}
-
-		restaurant.menus[nextDay-1].Add(isSoup, text, "", price)
-		isSoup = false
+		for group := groups.FirstChild; group != nil; group = group.NextSibling {
+			if !hasKeyValue(group, "class", "meal-group") {
+				continue
+			}
+			isSoup := false
+			if title, err := findNodeByClass(group, "group-title"); err == nil {
+				isSoup = hasKeyValue(title, "mc-text", "GLOBAL_WEEKLY_MENU_TYPE_SOUP")
+			}
+			restaurant.parseMeals(group, &restaurant.menus[dayIndex], isSoup)
+		}
 	}
 
 	restaurant.menus[0].SetDay("Monday")
