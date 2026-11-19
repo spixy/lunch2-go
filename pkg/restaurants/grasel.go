@@ -3,6 +3,7 @@ package restaurants
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -13,6 +14,20 @@ type GraselRestaurant struct {
 	Restaurant
 }
 
+var graselDays = map[string]int{
+	"pondělí": 0,
+	"úterý":   1,
+	"středa":  2,
+	"čtvrtek": 3,
+	"pátek":   4,
+	"sobota":  5,
+	"neděle":  6,
+}
+
+// graselSoupPrice matches the menu soup surcharge in the section header,
+// e.g. "Polévka dle denní nabídky – v menu +19 Kč, samostatně 49 Kč."
+var graselSoupPrice = regexp.MustCompile(`\+\s*(\d+)\s*Kč`)
+
 func NewGraselRestaurant(url string, name string, id int) *GraselRestaurant {
 	restaurant := new(GraselRestaurant)
 	restaurant.SetDefaultValues()
@@ -22,8 +37,8 @@ func NewGraselRestaurant(url string, name string, id int) *GraselRestaurant {
 	return restaurant
 }
 
-// graselPrice extracts the numeric price from strings like "139 Kč",
-// "+19 Kč" or "Samostatně 49 Kč". Returns -1 when no digits are found.
+// graselPrice extracts the numeric price from strings like "139 Kč".
+// Returns -1 when no digits are found.
 func graselPrice(text string) int {
 	var builder strings.Builder
 	for _, r := range text {
@@ -36,6 +51,51 @@ func graselPrice(text string) int {
 		return -1
 	}
 	return price
+}
+
+// graselChildText returns the normalized text of the first descendant with
+// the given class, or "" when there is none.
+func graselChildText(node *html.Node, class string) string {
+	child, err := findNodeByClass(node, class)
+	if err != nil {
+		return ""
+	}
+	text, err := getText(child)
+	if err != nil {
+		return ""
+	}
+	return normalizeWhitespace(text)
+}
+
+// graselTagText returns the normalized text of the first descendant element
+// with the given tag name, or "" when there is none.
+func graselTagText(node *html.Node, tag string) string {
+	for n := node.FirstChild; n != nil; n = n.NextSibling {
+		if n.Type == html.ElementNode && n.Data == tag {
+			if text, err := getText(n); err == nil {
+				return normalizeWhitespace(text)
+			}
+			return ""
+		}
+		if text := graselTagText(n, tag); text != "" {
+			return text
+		}
+	}
+	return ""
+}
+
+func (restaurant *GraselRestaurant) parseItems(node *html.Node, menu *Menu) {
+	if hasKeyValue(node, "class", "menu-list__item") {
+		name := graselChildText(node, "menu-list__label")
+		if name == "" {
+			return
+		}
+		menu.Add(false, name, graselChildText(node, "menu-list__desc"), graselPrice(graselChildText(node, "menu-list__price")))
+		return
+	}
+	for n := node.FirstChild; n != nil; n = n.NextSibling {
+		restaurant.parseItems(n, menu)
+	}
 }
 
 func (restaurant *GraselRestaurant) Parse() {
@@ -52,51 +112,40 @@ func (restaurant *GraselRestaurant) Parse() {
 		return
 	}
 
-	// The menu is a fixed weekday offering: the same twelve dishes are
-	// listed as <article class="dish"> inside <div class="dish-grid">.
-	grid, err := findNodeByClass(doc, "dish-grid")
+	// <section id="menu"> holds a <div class="week-day-grid"> with one
+	// <article class="menu-card"> per weekday: an <h3> with the Czech day
+	// name and a <ul class="menu-list"> of dishes.
+	section, err := findNodeById(doc, "menu")
+	if err != nil {
+		fmt.Printf("Couldn't find content for restaurant \"%s\"\n", restaurant.name)
+		return
+	}
+	grid, err := findNodeByClass(section, "week-day-grid")
 	if err != nil {
 		fmt.Printf("Couldn't find content for restaurant \"%s\"\n", restaurant.name)
 		return
 	}
 
-	// Optional daily soup, priced as "+19 Kč" (the plus is stripped).
-	if soupNode, err := findNodeByClass(doc, "menu-list__price"); err == nil {
-		if text, err := getText(soupNode); err == nil {
-			restaurant.AddPermanent(true, "Denní polévka", "", graselPrice(text))
+	// The soup is not named on the page ("Polévka dle denní nabídky"), only
+	// its surcharge in the section header, so list it as a permanent meal.
+	if header, err := findNodeByClass(section, "section__header"); err == nil {
+		if text, err := getText(header); err == nil {
+			if match := graselSoupPrice.FindStringSubmatch(text); match != nil {
+				price, _ := strconv.Atoi(match[1])
+				restaurant.AddPermanent(true, "Polévka dle denní nabídky", "", price)
+			}
 		}
 	}
 
-	for dish := grid.FirstChild; dish != nil; dish = dish.NextSibling {
-		if !hasKeyValue(dish, "class", "dish") {
+	for card := grid.FirstChild; card != nil; card = card.NextSibling {
+		if !hasKeyValue(card, "class", "menu-card") {
 			continue
 		}
-
-		nameNode, err := findNodeByClass(dish, "dish__name")
-		if err != nil {
+		dayIndex, ok := graselDays[strings.ToLower(graselTagText(card, "h3"))]
+		if !ok {
 			continue
 		}
-		name, err := getText(nameNode)
-		if err != nil {
-			continue
-		}
-		name = normalizeWhitespace(name)
-
-		desc := ""
-		if descNode, err := findNodeByClass(dish, "dish__desc"); err == nil {
-			if text, err := getText(descNode); err == nil {
-				desc = normalizeWhitespace(text)
-			}
-		}
-
-		price := -1
-		if priceNode, err := findNodeByClass(dish, "dish__price"); err == nil {
-			if text, err := getText(priceNode); err == nil {
-				price = graselPrice(text)
-			}
-		}
-
-		restaurant.AddPermanent(false, name, desc, price)
+		restaurant.parseItems(card, &restaurant.menus[dayIndex])
 	}
 
 	restaurant.menus[0].SetDay("Monday")
